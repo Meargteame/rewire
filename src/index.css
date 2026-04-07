@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", serif;
+
+  --color-brand-bg: #FDFCFB;
+  --color-brand-surface: #FFFFFF;
+  --color-brand-text: #1A1A1A;
+  --color-brand-muted: #666666;
+  --color-brand-border: #E5E5E5;
+  --color-brand-accent: #FF5C35;
+  --color-brand-accent-foreground: #FFFFFF;
+
+  --radius-card: 12px;
+  --radius-button: 9999px;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-text font-sans antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif tracking-tight;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-brand-border);
+}
+
+.section-padding {
+  @apply py-20 px-6 md:px-12 lg:px-24;
+}
