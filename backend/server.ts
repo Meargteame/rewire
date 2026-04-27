@@ -173,7 +173,7 @@ app.get("/api/challenge", (req, res) => {
   res.json({ success: true, challenge });
 });
 
-// GET /api/challenges - returns 6 random challenges
+// GET /api/challenges - returns 6 random challenges for dashboard
 app.get("/api/challenges", (req, res) => {
   const categories = [...new Set(CHALLENGE_LIBRARY.map(c => c.category))];
   const challenges = categories.slice(0, 6).map(cat => {
@@ -181,6 +181,11 @@ app.get("/api/challenges", (req, res) => {
     return pool[Math.floor(Math.random() * pool.length)];
   });
   res.json({ success: true, challenges });
+});
+
+// GET /api/challenges/all - returns all challenges
+app.get("/api/challenges/all", (req, res) => {
+  res.json({ success: true, challenges: CHALLENGE_LIBRARY });
 });
 
 // POST /api/challenge/complete - mark challenge as complete (requires auth)

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { CheckCircle2, RefreshCw } from "lucide-react";
 import type { Challenge } from "../hooks/useChallenge";
+import { useAuth } from "../contexts/AuthContext";
 
 interface Props {
   challenge: Challenge | null;
@@ -14,8 +15,8 @@ export default function ChallengeCard({ challenge, loading, onComplete, onRefres
   const [timeLeft, setTimeLeft] = useState(60);
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
+  const { user, refreshUser } = useAuth();
 
-  // Reset timer when challenge changes
   useEffect(() => {
     setTimeLeft(challenge?.durationSeconds ?? 60);
     setRunning(false);
@@ -27,16 +28,38 @@ export default function ChallengeCard({ challenge, loading, onComplete, onRefres
     if (timeLeft <= 0) {
       setRunning(false);
       setDone(true);
-      onComplete?.();
+      handleComplete();
       return;
     }
     const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
     return () => clearTimeout(id);
-  }, [running, timeLeft, onComplete]);
+  }, [running, timeLeft]);
+
+  const handleComplete = async () => {
+    onComplete?.();
+    
+    // Track completion if user is logged in
+    if (user && challenge) {
+      try {
+        await fetch("/api/challenge/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            challengeTitle: challenge.title,
+            category: challenge.category,
+            durationSeconds: challenge.durationSeconds,
+          }),
+        });
+        await refreshUser(); // Refresh streak and stats
+      } catch (err) {
+        console.error("Failed to track completion:", err);
+      }
+    }
+  };
 
   const total = challenge?.durationSeconds ?? 60;
   const progress = ((total - timeLeft) / total) * 100;
-
   const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
   if (loading) {
