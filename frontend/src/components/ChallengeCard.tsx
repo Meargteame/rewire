@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { CheckCircle2, RefreshCw } from "lucide-react";
 import type { Challenge } from "../hooks/useChallenge";
 import { useAuth } from "../contexts/AuthContext";
+import { showToast } from "./premium/PremiumToast";
 
 interface Props {
   challenge: Challenge | null;
   loading?: boolean;
-  onComplete?: () => void;
+  onComplete?: (challengeTitle: string) => void;
   onRefresh?: () => void;
 }
 
@@ -36,12 +37,12 @@ export default function ChallengeCard({ challenge, loading, onComplete, onRefres
   }, [running, timeLeft]);
 
   const handleComplete = async () => {
-    onComplete?.();
+    onComplete?.(challenge?.title || "Challenge");
     
     // Track completion if user is logged in
     if (user && challenge) {
       try {
-        await fetch("/api/challenge/complete", {
+        const response = await fetch("/api/challenge/complete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -51,9 +52,20 @@ export default function ChallengeCard({ challenge, loading, onComplete, onRefres
             durationSeconds: challenge.durationSeconds,
           }),
         });
+        
+        const data = await response.json();
+        
+        // Check for new achievements
+        if (data.newAchievements && data.newAchievements.length > 0) {
+          data.newAchievements.forEach((achievement: any) => {
+            showToast.success(`🏆 Achievement Unlocked: ${achievement.name}!`);
+          });
+        }
+        
         await refreshUser(); // Refresh streak and stats
       } catch (err) {
         console.error("Failed to track completion:", err);
+        showToast.error("Failed to save progress");
       }
     }
   };

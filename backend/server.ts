@@ -228,6 +228,9 @@ app.post("/api/challenge/complete", requireAuth, (req: AuthRequest, res) => {
     lastChallengeDate: today,
   });
 
+  // Check for newly unlocked achievements
+  const newAchievements = db.checkAchievements(user.id);
+
   res.json({
     success: true,
     user: {
@@ -235,6 +238,7 @@ app.post("/api/challenge/complete", requireAuth, (req: AuthRequest, res) => {
       longestStreak: updated!.longestStreak,
       totalChallenges: updated!.totalChallenges,
     },
+    newAchievements
   });
 });
 
@@ -250,6 +254,73 @@ app.get("/api/stats", requireAuth, (req: AuthRequest, res) => {
   const user = req.user!;
   const stats = db.getUserStats(user.id);
   res.json({ success: true, stats });
+});
+
+// GET /api/achievements - get user achievements
+app.get("/api/achievements", requireAuth, (req: AuthRequest, res) => {
+  const user = req.user!;
+  const achievements = db.getUserAchievements(user.id);
+  res.json({ success: true, achievements });
+});
+
+// GET /api/insights - get user insights
+app.get("/api/insights", requireAuth, (req: AuthRequest, res) => {
+  const user = req.user!;
+  const history = db.getUserHistory(user.id);
+  const stats = db.getUserStats(user.id);
+  
+  // Calculate insights
+  const insights = [];
+  
+  // Productivity by time of day
+  const hourCounts = new Array(24).fill(0);
+  history.forEach(h => {
+    const hour = new Date(h.completedAt).getHours();
+    hourCounts[hour]++;
+  });
+  const bestHour = hourCounts.indexOf(Math.max(...hourCounts));
+  const bestHourCount = Math.max(...hourCounts);
+  
+  if (bestHourCount > 0) {
+    const timeLabel = bestHour < 12 ? `${bestHour || 12}AM` : `${bestHour === 12 ? 12 : bestHour - 12}PM`;
+    insights.push({
+      type: 'trend',
+      title: 'Peak Performance Time',
+      description: `You're most productive around ${timeLabel}`,
+      metric: bestHourCount,
+      change: null
+    });
+  }
+  
+  // Streak momentum
+  if (user.currentStreak > 0) {
+    const streakProgress = (user.currentStreak / user.longestStreak) * 100;
+    if (streakProgress > 80) {
+      insights.push({
+        type: 'milestone',
+        title: 'Streak Momentum',
+        description: "You're close to beating your personal record!",
+        metric: user.currentStreak,
+        change: null
+      });
+    }
+  }
+  
+  // Category preference
+  const topCategory = Object.entries(stats.categoriesBreakdown)
+    .sort(([,a], [,b]) => b - a)[0];
+  
+  if (topCategory) {
+    insights.push({
+      type: 'recommendation',
+      title: 'Favorite Category',
+      description: `You love ${topCategory[0]} challenges`,
+      metric: topCategory[1],
+      change: null
+    });
+  }
+  
+  res.json({ success: true, insights });
 });
 
 // Health check
