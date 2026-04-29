@@ -25,6 +25,7 @@ interface SmartRecommendationsProps {
 export default function SmartRecommendations({ userId, className = "" }: SmartRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     if (userId) {

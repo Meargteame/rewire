@@ -9,6 +9,11 @@ interface AnimatedCardProps {
   gradient?: boolean;
 }
 
+/** Caller-set bg-* must not be paired with our default surface (Tailwind + layer order can hide gradients). */
+function hasExplicitBackground(className: string) {
+  return /(^|\s)(?:!)?bg-/.test(className);
+}
+
 export default function AnimatedCard({ 
   children, 
   className = "", 
@@ -16,6 +21,12 @@ export default function AnimatedCard({
   delay = 0,
   gradient = false 
 }: AnimatedCardProps) {
+  const base = gradient
+    ? "gradient-border"
+    : hasExplicitBackground(className)
+      ? "premium-card"
+      : "premium-card bg-brand-surface";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -32,7 +43,7 @@ export default function AnimatedCard({
       } : undefined}
       whileTap={hover ? { scale: 0.98 } : undefined}
       className={`
-        ${gradient ? 'gradient-border' : 'premium-card'}
+        ${base}
         ${className}
       `}
     >

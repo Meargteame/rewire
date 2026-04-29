@@ -1,13 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  currentStreak: number;
-  longestStreak: number;
-  totalChallenges: number;
-}
+import { api } from "../services/api";
+import { handleAuthError, handleApiError } from "../utils/errorHandler";
+import type { User } from "../types";
 
 interface AuthContextType {
   user: User | null;
@@ -26,14 +20,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUser = async () => {
     try {
-      const res = await fetch("/api/auth/me", { credentials: "include" });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-      } else {
-        setUser(null);
-      }
-    } catch {
+      const userData = await api.auth.me();
+      setUser(userData);
+    } catch (error) {
+      // Don't show error toast on initial load (user might not be logged in)
       setUser(null);
     } finally {
       setLoading(false);
@@ -45,45 +35,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || "Login failed");
+    try {
+      const userData = await api.auth.login(email, password);
+      setUser(userData);
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
     }
-
-    const data = await res.json();
-    setUser(data.user);
   };
 
   const signup = async (email: string, password: string, name: string) => {
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name }),
-      credentials: "include",
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || "Signup failed");
+    try {
+      const userData = await api.auth.signup(email, password, name);
+      setUser(userData);
+    } catch (error) {
+      handleAuthError(error);
+      throw error;
     }
-
-    const data = await res.json();
-    setUser(data.user);
   };
 
   const logout = async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    setUser(null);
+    try {
+      await api.auth.logout();
+      setUser(null);
+    } catch (error) {
+      handleApiError(error, "Failed to logout");
+    }
   };
 
   const refreshUser = async () => {

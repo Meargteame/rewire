@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../contexts/AuthContext";
 import { User, Mail, Lock, Bell, Palette, Save, AlertCircle } from "lucide-react";
@@ -71,7 +71,7 @@ export default function SettingsPage() {
     <div className="flex min-h-screen bg-brand-bg">
       <Sidebar />
       
-      <main className="flex-1 ml-64 p-8">
+      <main className="page-shell-main">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-serif font-bold mb-2">

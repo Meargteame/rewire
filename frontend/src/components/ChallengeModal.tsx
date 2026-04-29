@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import ChallengeCard from "./ChallengeCard";
 import { useChallenge } from "../hooks/useChallenge";

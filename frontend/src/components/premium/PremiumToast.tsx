@@ -17,12 +17,12 @@ const CustomToast = ({
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, y: -50, scale: 0.9 }}
     className={`
-      flex items-center gap-3 p-4 rounded-xl shadow-lg backdrop-blur-sm
-      ${type === 'success' ? 'bg-green-50 border border-green-200 text-green-800' : ''}
-      ${type === 'error' ? 'bg-red-50 border border-red-200 text-red-800' : ''}
-      ${type === 'warning' ? 'bg-yellow-50 border border-yellow-200 text-yellow-800' : ''}
-      ${type === 'info' ? 'bg-blue-50 border border-blue-200 text-blue-800' : ''}
-      ${type === 'streak' ? 'bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 text-orange-800' : ''}
+      flex items-center gap-3 p-4 rounded-xl shadow-md backdrop-blur-sm border
+      ${type === "success" ? "bg-state-success-bg border-state-success-border text-state-success-fg" : ""}
+      ${type === "error" ? "bg-state-error-bg border-state-error-border text-state-error-fg" : ""}
+      ${type === "warning" ? "bg-state-warning-bg border-state-warning-border text-state-warning-fg" : ""}
+      ${type === "info" ? "bg-state-info-bg border-state-info-border text-state-info-fg" : ""}
+      ${type === "streak" ? "bg-state-streak-bg border-state-streak-border text-state-streak-fg" : ""}
     `}
   >
     <Icon className="w-5 h-5 flex-shrink-0" />
@@ -76,7 +76,7 @@ export const showToast = {
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex items-center gap-3 p-4 bg-white rounded-xl shadow-lg border border-orange-200"
+        className="flex items-center gap-3 p-4 bg-brand-surface rounded-xl shadow-md border border-state-streak-border"
       >
         <motion.div
           animate={{ rotate: 360 }}
@@ -86,8 +86,8 @@ export const showToast = {
           ⭐
         </motion.div>
         <div>
-          <p className="font-semibold text-gray-900">Challenge Complete!</p>
-          <p className="text-sm text-gray-600">{title}</p>
+          <p className="font-semibold text-brand-text">Challenge Complete!</p>
+          <p className="text-sm text-brand-muted">{title}</p>
         </div>
       </motion.div>
     ), { duration: 3000 });

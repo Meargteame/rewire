@@ -105,7 +105,7 @@ export default function DashboardPage() {
     return (
       <div className="flex min-h-screen bg-brand-bg">
         <Sidebar />
-        <main className="flex-1 ml-0 md:ml-64 p-4 md:p-8">
+        <main className="page-shell-main">
           <SkeletonLoader variant="dashboard" />
         </main>
       </div>
@@ -117,10 +117,10 @@ export default function DashboardPage() {
   const dailyProgress = Math.min((completedToday / dailyGoal) * 100, 100);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-orange-50 via-white to-blue-50">
+    <div className="flex min-h-screen bg-brand-bg">
       <Sidebar />
       
-      <main className="flex-1 ml-0 md:ml-64 p-4 md:p-8">
+      <main className="page-shell-main">
         {/* Header */}
         <motion.div 
           className="mb-6 md:mb-8"
@@ -128,7 +128,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-2xl md:text-4xl font-serif font-bold mb-2 gradient-text">
+          <h1 className="text-3xl md:text-5xl font-serif font-bold mb-2 text-brand-text">
             Welcome back, {user.name}! 👋
           </h1>
           <p className="text-brand-muted text-base md:text-lg">
@@ -138,61 +138,67 @@ export default function DashboardPage() {
           </p>
         </motion.div>
 
-        {/* Stats Grid - Premium */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-          {/* Current Streak - Hero Card */}
-          <AnimatedCard 
-            className="col-span-2 bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 p-4 md:p-6 text-white shadow-2xl relative overflow-hidden"
+        {/* Stats grid: stretch so cards share height; streak hero uses row layout on md+ */}
+        <div className="grid grid-cols-2 md:grid-cols-4 items-stretch gap-3 md:gap-6 mb-6 md:mb-8">
+          <AnimatedCard
+            className="col-span-2 bg-brand-accent p-4 md:p-6 text-white shadow-accent relative overflow-hidden min-h-[11rem] md:min-h-[12rem] flex rounded-card"
             delay={0.1}
           >
             <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-white/10 rounded-full -mr-12 md:-mr-16 -mt-12 md:-mt-16" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-2 md:mb-3">
-                <StreakFlame streak={user.currentStreak} size="md" />
-                <span className="text-xs md:text-sm font-semibold uppercase tracking-wider opacity-90">
-                  Current Streak
-                </span>
+            <div className="relative z-10 flex w-full flex-col justify-between gap-4 md:flex-row md:items-center">
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 flex items-center gap-2 md:mb-2">
+                  <StreakFlame streak={user.currentStreak} size="md" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-white/90 md:text-sm">
+                    Current Streak
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0">
+                  <span className="text-4xl font-bold tabular-nums leading-none md:text-6xl">{user.currentStreak}</span>
+                  <span className="text-lg text-white/85 md:text-2xl">days</span>
+                </div>
+                <p className="mt-2 max-w-sm text-xs leading-snug text-white/80">
+                  {user.currentStreak >= 30
+                    ? "You have hit the 30-day milestone. Keep the rhythm going."
+                    : `${Math.max(0, 30 - user.currentStreak)} days to your 30-day milestone.`}
+                </p>
               </div>
-              <div className="flex items-baseline gap-2 mb-3 md:mb-4">
-                <span className="text-4xl md:text-6xl font-bold">{user.currentStreak}</span>
-                <span className="text-lg md:text-2xl opacity-80">days</span>
-              </div>
-              <div className="mb-2">
-                <ProgressRing 
-                  progress={streakPercentage} 
-                  size={60} 
-                  strokeWidth={4}
-                  color="rgba(255,255,255,0.9)"
-                  backgroundColor="rgba(255,255,255,0.2)"
+              <div className="shrink-0 self-start md:self-center">
+                <ProgressRing
+                  progress={streakPercentage}
+                  size={72}
+                  strokeWidth={5}
+                  color="rgba(255,255,255,0.95)"
+                  backgroundColor="rgba(255,255,255,0.22)"
                   showPercentage={false}
+                  glow
                 />
               </div>
-              <p className="text-xs opacity-80">
-                {30 - user.currentStreak} days to 30-day milestone
-              </p>
             </div>
           </AnimatedCard>
 
-          {/* Total Challenges */}
-          <AnimatedCard className="bg-white p-4 md:p-6 shadow-lg" delay={0.2}>
-            <div className="flex items-center gap-2 mb-2 md:mb-3">
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                <Target className="w-4 h-4 md:w-5 md:h-5 text-green-600" />
+          <AnimatedCard className="flex h-full min-h-[10.5rem] flex-col justify-between bg-white p-4 md:p-5 shadow-lg" delay={0.2}>
+            <div className="w-full">
+              <div className="mb-3 flex w-full items-center justify-between gap-2">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 md:h-10 md:w-10">
+                  <Target className="h-4 w-4 text-emerald-600 md:h-5 md:w-5" />
+                </div>
               </div>
+              <p className="text-2xl font-bold tabular-nums text-brand-text md:text-3xl">{user.totalChallenges}</p>
             </div>
-            <p className="text-2xl md:text-3xl font-bold mb-1 gradient-text">{user.totalChallenges}</p>
-            <p className="text-xs md:text-sm text-brand-muted">Total Completed</p>
+            <p className="text-xs text-brand-muted md:text-sm">Total completed</p>
           </AnimatedCard>
 
-          {/* Longest Streak */}
-          <AnimatedCard className="bg-white p-4 md:p-6 shadow-lg" delay={0.3}>
-            <div className="flex items-center gap-2 mb-2 md:mb-3">
-              <div className="w-8 h-8 md:w-10 md:h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-                <Trophy className="w-4 h-4 md:w-5 md:h-5 text-yellow-600" />
+          <AnimatedCard className="flex h-full min-h-[10.5rem] flex-col justify-between bg-white p-4 md:p-5 shadow-lg" delay={0.3}>
+            <div className="w-full">
+              <div className="mb-3 flex w-full items-center justify-between gap-2">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 md:h-10 md:w-10">
+                  <Trophy className="h-4 w-4 text-amber-600 md:h-5 md:w-5" />
+                </div>
               </div>
+              <p className="text-2xl font-bold tabular-nums text-brand-text md:text-3xl">{user.longestStreak}</p>
             </div>
-            <p className="text-2xl md:text-3xl font-bold mb-1 gradient-text">{user.longestStreak}</p>
-            <p className="text-xs md:text-sm text-brand-muted">Personal Best</p>
+            <p className="text-xs text-brand-muted md:text-sm">Personal best (days)</p>
           </AnimatedCard>
         </div>
 

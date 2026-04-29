@@ -88,9 +88,9 @@ export default function ProgressPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="flex min-h-screen bg-brand-bg">
         <Sidebar />
-        <main className="flex-1 ml-0 md:ml-64 p-4 md:p-8">
+        <main className="page-shell-main">
           <SkeletonLoader variant="dashboard" />
         </main>
       </div>
@@ -109,17 +109,17 @@ export default function ProgressPage() {
   const lockedAchievements = achievements.filter(a => !a.unlocked);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="flex min-h-screen bg-brand-bg">
       <Sidebar />
       
-      <main className="flex-1 ml-0 md:ml-64 p-4 md:p-8">
+      <main className="page-shell-main">
         {/* Header */}
         <motion.div 
           className="mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-3xl md:text-4xl font-serif font-bold mb-2 gradient-text">
+          <h1 className="text-3xl md:text-5xl font-serif font-bold mb-2 text-brand-text">
             Your Progress 📊
           </h1>
           <p className="text-brand-muted text-lg">
@@ -128,7 +128,7 @@ export default function ProgressPage() {
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-8 bg-white p-1 rounded-xl shadow-sm w-fit">
+        <div className="flex gap-1 mb-8 bg-brand-surface p-1 rounded-card shadow-card w-fit border border-brand-border">
           {[
             { id: "overview", label: "Overview", icon: BarChart3 },
             { id: "insights", label: "Insights", icon: TrendingUp },
@@ -140,21 +140,15 @@ export default function ProgressPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`
-                  flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all relative
+                  flex items-center gap-2 px-6 py-3 rounded-md font-medium transition-all
                   ${activeTab === tab.id 
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    ? 'bg-brand-accent text-white shadow-sm' 
+                    : 'text-brand-muted hover:text-brand-text hover:bg-neutral-50'
                   }
                 `}
               >
                 <Icon className="w-4 h-4" />
                 {tab.label}
-                {activeTab === tab.id && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg -z-10"
-                  />
-                )}
               </button>
             );
           })}
@@ -164,7 +158,7 @@ export default function ProgressPage() {
           <div className="space-y-8">
             {/* Stats Overview */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <AnimatedCard className="bg-gradient-to-br from-blue-500 to-purple-500 p-6 text-white shadow-xl" delay={0.1}>
+              <AnimatedCard className="bg-brand-accent p-6 text-white shadow-accent rounded-card" delay={0.1}>
                 <div className="flex items-center gap-2 mb-2">
                   <Zap className="w-5 h-5" />
                   <span className="text-sm font-semibold uppercase tracking-wider opacity-90">
@@ -180,7 +174,7 @@ export default function ProgressPage() {
                   <Target className="w-5 h-5 text-green-600" />
                   <span className="text-sm font-semibold text-brand-muted">Total Completed</span>
                 </div>
-                <p className="text-4xl font-bold gradient-text">{user.totalChallenges}</p>
+                <p className="text-4xl font-bold text-brand-text">{user.totalChallenges}</p>
                 <p className="text-sm text-brand-muted mt-1">challenges</p>
               </AnimatedCard>
 
@@ -189,7 +183,7 @@ export default function ProgressPage() {
                   <Award className="w-5 h-5 text-yellow-600" />
                   <span className="text-sm font-semibold text-brand-muted">Personal Best</span>
                 </div>
-                <p className="text-4xl font-bold gradient-text">{user.longestStreak}</p>
+                <p className="text-4xl font-bold text-brand-text">{user.longestStreak}</p>
                 <p className="text-sm text-brand-muted mt-1">day streak</p>
               </AnimatedCard>
 
@@ -198,7 +192,7 @@ export default function ProgressPage() {
                   <Clock className="w-5 h-5 text-blue-600" />
                   <span className="text-sm font-semibold text-brand-muted">Time Invested</span>
                 </div>
-                <p className="text-4xl font-bold gradient-text">{Math.floor((user.totalChallenges * 60) / 60)}</p>
+                <p className="text-4xl font-bold text-brand-text">{Math.floor((user.totalChallenges * 60) / 60)}</p>
                 <p className="text-sm text-brand-muted mt-1">minutes</p>
               </AnimatedCard>
             </div>
@@ -207,7 +201,7 @@ export default function ProgressPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Weekly Progress Chart */}
               <AnimatedCard className="bg-white p-6 shadow-lg" delay={0.5}>
-                <h3 className="text-xl font-serif font-bold mb-6 gradient-text">Weekly Progress</h3>
+                <h3 className="text-xl font-serif font-bold mb-6 text-brand-text">Weekly Progress</h3>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={weeklyData}>
@@ -243,7 +237,7 @@ export default function ProgressPage() {
 
               {/* Category Distribution */}
               <AnimatedCard className="bg-white p-6 shadow-lg" delay={0.6}>
-                <h3 className="text-xl font-serif font-bold mb-6 gradient-text">Category Distribution</h3>
+                <h3 className="text-xl font-serif font-bold mb-6 text-brand-text">Category Distribution</h3>
                 {categoryData.length > 0 ? (
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -279,7 +273,7 @@ export default function ProgressPage() {
             {/* Challenge History Timeline */}
             <AnimatedCard className="bg-white p-6 shadow-lg" delay={0.7}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-serif font-bold gradient-text">Recent Activity</h2>
+                <h2 className="text-2xl font-serif font-bold text-brand-text">Recent Activity</h2>
                 <Calendar className="w-5 h-5 text-brand-muted" />
               </div>
 
@@ -368,7 +362,7 @@ export default function ProgressPage() {
             {/* Unlocked Achievements */}
             {unlockedAchievements.length > 0 && (
               <div>
-                <h3 className="text-2xl font-serif font-bold mb-6 gradient-text">
+                <h3 className="text-2xl font-serif font-bold mb-6 text-brand-text">
                   Unlocked ({unlockedAchievements.length})
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6">
@@ -398,7 +392,7 @@ export default function ProgressPage() {
             {/* In Progress Achievements */}
             {lockedAchievements.filter(a => a.progress > 0).length > 0 && (
               <div>
-                <h3 className="text-2xl font-serif font-bold mb-6 gradient-text">
+                <h3 className="text-2xl font-serif font-bold mb-6 text-brand-text">
                   In Progress ({lockedAchievements.filter(a => a.progress > 0).length})
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -436,7 +430,7 @@ export default function ProgressPage() {
             {/* Locked Achievements */}
             {lockedAchievements.filter(a => a.progress === 0).length > 0 && (
               <div>
-                <h3 className="text-2xl font-serif font-bold mb-6 gradient-text">
+                <h3 className="text-2xl font-serif font-bold mb-6 text-brand-text">
                   Locked ({lockedAchievements.filter(a => a.progress === 0).length})
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-6">

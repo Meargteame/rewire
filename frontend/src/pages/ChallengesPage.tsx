@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import Sidebar from "../components/Sidebar";
 import { Target, Filter, Search, Clock, Sparkles } from "lucide-react";
 
@@ -57,7 +57,7 @@ export default function ChallengesPage() {
     <div className="flex min-h-screen bg-brand-bg">
       <Sidebar />
       
-      <main className="flex-1 ml-64 p-8">
+      <main className="page-shell-main">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-serif font-bold mb-2">

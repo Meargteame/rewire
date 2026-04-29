@@ -1,0 +1,279 @@
+/*
+ * Component & animation layer — uses tokens from @theme in index.css only.
+ * Do not re-declare :root; no second accent or font stack.
+ */
+
+@keyframes rw-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rw-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rw-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes rw-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes rw-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes rw-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/*
+ * Card shell: border + radius + shadow only.
+ * Do not set background here — it loads after Tailwind and would override bg-gradient-* / bg-white on children.
+ * Pair with bg-brand-surface, bg-white, or gradient utilities in markup.
+ */
+.premium-card {
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-neutral-300);
+}
+
+/* Gradient border card — pairs with AnimatedCard gradient mode */
+.gradient-border {
+  position: relative;
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(var(--color-brand-surface), var(--color-brand-surface)) padding-box,
+    linear-gradient(
+        135deg,
+        var(--color-brand-accent),
+        var(--color-brand-accent-hover)
+      )
+      border-box;
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gradient-border:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.premium-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-brand-accent);
+  color: var(--color-brand-accent-foreground);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.premium-button:hover {
+  background: var(--color-brand-accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.premium-button:active {
+  transform: translateY(0);
+  background: var(--color-brand-accent-active);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-brand-accent) 0%, var(--color-brand-accent-hover) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.shimmer-loading {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-neutral-200);
+}
+
+.shimmer-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-brand-surface) 70%, transparent), transparent);
+  animation: rw-shimmer 1.5s infinite;
+}
+
+.float-animation {
+  animation: rw-float 3s ease-in-out infinite;
+}
+
+.bounce-in {
+  animation: rw-bounce-in 0.5s ease-out;
+}
+
+.fade-in {
+  animation: rw-fade-in 0.3s ease-out;
+}
+
+.slide-up {
+  animation: rw-slide-up 0.4s ease-out;
+}
+
+.pulse {
+  animation: rw-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* SVG / ring helper */
+.glow-effect {
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-brand-accent) 45%, transparent));
+}
+
+.bg-gradient-orange {
+  background: linear-gradient(135deg, var(--color-brand-accent) 0%, var(--color-brand-accent-hover) 100%);
+}
+
+.bg-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.bg-gradient-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.bg-gradient-pink {
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  transition: transform 0.2s ease;
+}
+
+.icon-container:hover {
+  transform: scale(1.05);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-button);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.badge-orange {
+  background: color-mix(in srgb, var(--color-brand-accent) 10%, var(--color-brand-surface));
+  color: var(--color-brand-accent);
+}
+
+.badge-blue {
+  background: var(--color-state-info-bg);
+  color: var(--color-state-info-fg);
+}
+
+.badge-green {
+  background: var(--color-state-success-bg);
+  color: var(--color-state-success-fg);
+}
+
+.badge-yellow {
+  background: var(--color-state-warning-bg);
+  color: var(--color-state-warning-fg);
+}
+
+.badge-red {
+  background: var(--color-state-error-bg);
+  color: var(--color-state-error-fg);
+}
+
+.divider {
+  height: 1px;
+  background: var(--color-neutral-200);
+  margin: 1.5rem 0;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-neutral-100);
+  border-radius: var(--radius-button);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-300);
+  border-radius: var(--radius-button);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-400);
+}

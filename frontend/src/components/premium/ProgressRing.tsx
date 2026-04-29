@@ -16,8 +16,8 @@ export default function ProgressRing({
   progress,
   size = 120,
   strokeWidth = 8,
-  color = "#f97316",
-  backgroundColor = "#f3f4f6",
+  color = "var(--color-brand-accent)",
+  backgroundColor = "var(--color-neutral-200)",
   showPercentage = true,
   animated = true,
   glow = false
@@ -72,7 +72,9 @@ export default function ProgressRing({
             ease: "easeOut"
           }}
           style={{
-            filter: glow ? `drop-shadow(0 0 8px ${color}40)` : undefined
+            filter: glow
+              ? "drop-shadow(0 0 8px color-mix(in srgb, var(--color-brand-accent) 35%, transparent))"
+              : undefined
           }}
         />
       </svg>

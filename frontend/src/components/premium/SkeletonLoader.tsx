@@ -17,7 +17,7 @@ export default function SkeletonLoader({
   };
 
   const SkeletonElement = ({ children }: { children: React.ReactNode }) => (
-    <div className={`relative overflow-hidden bg-gray-200 rounded ${className}`}>
+    <div className={`relative overflow-hidden bg-neutral-200 rounded ${className}`}>
       <motion.div
         className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent"
         variants={shimmerVariants}

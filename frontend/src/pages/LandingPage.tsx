@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, Clock, Zap, Brain, Sparkles, Smartphone, ShieldCheck, Star, Quote } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ChallengeCard from "../components/ChallengeCard";

@@ -1,25 +1,31 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, RefreshCw } from "lucide-react";
-import type { Challenge } from "../hooks/useChallenge";
 import { useAuth } from "../contexts/AuthContext";
 import { showToast } from "./premium/PremiumToast";
+import { api } from "../services/api";
+import { handleApiError } from "../utils/errorHandler";
+import { formatTime } from "../utils";
+import { DEFAULT_CHALLENGE_DURATION } from "../constants";
+import type { Challenge } from "../types";
 
 interface Props {
   challenge: Challenge | null;
   loading?: boolean;
   onComplete?: (challengeTitle: string) => void;
   onRefresh?: () => void;
+  /** Use full width of parent (e.g. dashboard). Default keeps a comfortable max width for landing. */
+  fullWidth?: boolean;
 }
 
-export default function ChallengeCard({ challenge, loading, onComplete, onRefresh }: Props) {
-  const [timeLeft, setTimeLeft] = useState(60);
+export default function ChallengeCard({ challenge, loading, onComplete, onRefresh, fullWidth = false }: Props) {
+  const [timeLeft, setTimeLeft] = useState(DEFAULT_CHALLENGE_DURATION);
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
   const { user, refreshUser } = useAuth();
 
   useEffect(() => {
-    setTimeLeft(challenge?.durationSeconds ?? 60);
+    setTimeLeft(challenge?.durationSeconds ?? DEFAULT_CHALLENGE_DURATION);
     setRunning(false);
     setDone(false);
   }, [challenge]);
@@ -42,41 +48,36 @@ export default function ChallengeCard({ challenge, loading, onComplete, onRefres
     // Track completion if user is logged in
     if (user && challenge) {
       try {
-        const response = await fetch("/api/challenge/complete", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            challengeTitle: challenge.title,
-            category: challenge.category,
-            durationSeconds: challenge.durationSeconds,
-          }),
+        const data = await api.challenges.complete({
+          challengeTitle: challenge.title,
+          category: challenge.category,
+          durationSeconds: challenge.durationSeconds,
         });
-        
-        const data = await response.json();
         
         // Check for new achievements
         if (data.newAchievements && data.newAchievements.length > 0) {
-          data.newAchievements.forEach((achievement: any) => {
+          data.newAchievements.forEach((achievement) => {
             showToast.success(`🏆 Achievement Unlocked: ${achievement.name}!`);
           });
         }
         
         await refreshUser(); // Refresh streak and stats
       } catch (err) {
-        console.error("Failed to track completion:", err);
-        showToast.error("Failed to save progress");
+        handleApiError(err, "Failed to save progress");
       }
     }
   };
 
-  const total = challenge?.durationSeconds ?? 60;
+  const total = challenge?.durationSeconds ?? DEFAULT_CHALLENGE_DURATION;
   const progress = ((total - timeLeft) / total) * 100;
-  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+
+  const shellClass = fullWidth
+    ? "w-full p-6 md:p-8 glass rounded-card shadow-xl"
+    : "w-full max-w-md p-8 glass rounded-card shadow-xl";
 
   if (loading) {
     return (
-      <div className="w-full max-w-md p-8 glass rounded-card shadow-xl animate-pulse">
+      <div className={`${shellClass} animate-pulse`}>
         <div className="h-3 bg-brand-border rounded w-1/3 mb-6" />
         <div className="h-6 bg-brand-border rounded w-3/4 mb-3" />
         <div className="h-4 bg-brand-border rounded w-full mb-6" />
@@ -91,7 +92,7 @@ export default function ChallengeCard({ challenge, loading, onComplete, onRefres
       key={challenge?.title}
       initial={{ opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-md p-8 glass rounded-card shadow-xl"
+      className={shellClass}
     >
       <div className="flex items-center justify-between mb-6">
         <span className="text-xs font-semibold text-brand-muted uppercase tracking-widest">
@@ -99,7 +100,7 @@ export default function ChallengeCard({ challenge, loading, onComplete, onRefres
         </span>
         <div className="flex items-center gap-3">
           <span className={`font-mono text-sm ${timeLeft <= 10 && running ? "text-red-500" : "text-brand-accent"}`}>
-            {fmt(timeLeft)}
+            {formatTime(timeLeft)}
           </span>
           {onRefresh && (
             <button onClick={onRefresh} className="text-brand-muted hover:text-brand-accent transition-colors" aria-label="New challenge">

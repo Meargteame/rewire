@@ -1,38 +1,111 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
 @import "tailwindcss";
 
+/*
+ * Rewire design tokens — single source of truth.
+ * Utilities (bg-brand-*, text-neutral-*, shadow-card, etc.) are generated from @theme.
+ */
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Instrument Serif", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
 
-  --color-brand-bg: #FDFCFB;
-  --color-brand-surface: #FFFFFF;
-  --color-brand-text: #1A1A1A;
-  --color-brand-muted: #666666;
-  --color-brand-border: #E5E5E5;
-  --color-brand-accent: #FF5C35;
-  --color-brand-accent-foreground: #FFFFFF;
+  /* Brand / canvas */
+  --color-brand-bg: #fdfcfb;
+  --color-brand-surface: #ffffff;
+  --color-brand-text: #1a1a1a;
+  --color-brand-muted: #5c5b58;
+  --color-brand-border: #e6e3df;
 
-  --radius-card: 12px;
+  --color-brand-accent: #ff5c35;
+  --color-brand-accent-foreground: #ffffff;
+  --color-brand-accent-hover: #e54e2d;
+  --color-brand-accent-active: #c74324;
+
+  /* Warm neutrals (raw CSS + bg-neutral-*, text-neutral-*) */
+  --color-neutral-50: #faf9f7;
+  --color-neutral-100: #f3f1ed;
+  --color-neutral-200: #e6e2dc;
+  --color-neutral-300: #cec9c2;
+  --color-neutral-400: #9c9790;
+  --color-neutral-500: #6f6a63;
+  --color-neutral-600: #4d4944;
+  --color-neutral-700: #363330;
+  --color-neutral-800: #1f1e1c;
+  --color-neutral-900: #121110;
+
+  /* Toast & inline semantic surfaces */
+  --color-state-success-bg: #ecf8f0;
+  --color-state-success-border: #b8e3c8;
+  --color-state-success-fg: #14532d;
+  --color-state-error-bg: #fef0f0;
+  --color-state-error-border: #f5c4c4;
+  --color-state-error-fg: #7f1d1d;
+  --color-state-warning-bg: #fff9eb;
+  --color-state-warning-border: #f0d28a;
+  --color-state-warning-fg: #713f12;
+  --color-state-info-bg: #eff6ff;
+  --color-state-info-border: #bfdbfe;
+  --color-state-info-fg: #1e3a5f;
+  --color-state-streak-bg: #fff4f0;
+  --color-state-streak-border: #ffc9b5;
+  --color-state-streak-fg: #7c2d12;
+
+  /* Elevation */
+  --shadow-xs: 0 1px 2px rgb(15 15 15 / 0.04);
+  --shadow-sm: 0 1px 2px rgb(15 15 15 / 0.05), 0 1px 3px rgb(15 15 15 / 0.06);
+  --shadow-md: 0 4px 12px rgb(15 15 15 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(15 15 15 / 0.1);
+  --shadow-card: 0 1px 0 rgb(15 15 15 / 0.04), 0 1px 3px rgb(15 15 15 / 0.06);
+  --shadow-accent: 0 8px 24px color-mix(in srgb, var(--color-brand-accent) 25%, transparent);
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+  --radius-card: 0.75rem;
   --radius-button: 9999px;
 }
 
 @layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     @apply bg-brand-bg text-brand-text font-sans antialiased;
   }
 
-  h1, h2, h3, h4 {
-    @apply font-serif tracking-tight;
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif tracking-tight text-brand-text;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-brand-accent) 28%, transparent);
+    color: var(--color-brand-text);
   }
 }
 
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--color-brand-border);
-}
+@layer components {
+  /* One glass treatment site-wide (navbar, overlays) */
+  .glass {
+    background: color-mix(in srgb, var(--color-brand-surface) 82%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-brand-border);
+  }
 
-.section-padding {
-  @apply py-20 px-6 md:px-12 lg:px-24;
+  .section-padding {
+    @apply py-20 px-6 md:px-12 lg:px-24;
+  }
+
+  /* Dashboard / app content next to fixed sidebar (w-64) */
+  .page-shell-main {
+    @apply flex-1 min-w-0 ml-0 md:ml-64 p-4 md:p-8;
+  }
 }
